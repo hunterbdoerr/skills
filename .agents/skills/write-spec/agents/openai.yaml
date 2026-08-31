@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Spec"
+  short_description: "Turn resolved context into a repository spec"
+  default_prompt: "Use $write-spec to turn the available context and repository evidence into a proportionate specification that preserves my direction and matches useful local conventions."

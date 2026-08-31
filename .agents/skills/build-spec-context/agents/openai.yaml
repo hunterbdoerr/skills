@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build Spec Context"
+  short_description: "Discover decisions before writing a specification"
+  default_prompt: "Use $build-spec-context to investigate this idea around my priorities, challenge relevant edge cases, and prepare a proportionate handoff for $write-spec."
