@@ -48,6 +48,10 @@ Approve revision `<plan-revision>` to implement `<outcome>` through the fixed
 
 ## Proposed Execution
 
+Each row must define a task that is explicit and small enough for one direct
+implementer to complete without delegation, followed by one independent direct
+tester/reviewer using the stated objective verification.
+
 | Order | Task | Objective | Dependencies | Primary verification | Risk | Human gate |
 |---:|---|---|---|---|---|---|
 | 1 | [`task-001`](tasks/task-001-<slug>.md) | <objective> | None | <check> | <risk> | Not required |
@@ -98,7 +102,12 @@ decision, and links to the smallest exact heading, for example:
 
 - The approved task count is fixed at `<task-count>`, including exactly one
   final-verification task.
+- Use exactly one read-only planning boundary, at initial plan generation or a
+  material amendment. Do not add a planner during task execution.
 - Execute at most one task at a time.
+- Execute every task with one direct implementer followed by one different,
+  independent direct tester/reviewer. Neither role may spawn or delegate to a
+  planner, helper, or sub-agent.
 - Reserve and persist a cycle before each implementer dispatch.
 - Allow at most three autonomous cycles per task by default.
 - Do not expand scope, weaken acceptance, or materially amend this plan

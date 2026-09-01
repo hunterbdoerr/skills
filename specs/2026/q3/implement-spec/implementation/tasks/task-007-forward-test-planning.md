@@ -2,50 +2,90 @@
 schema_version: 1
 id: task-007
 kind: implementation
-status: needs-human
-dependencies: [task-004, task-005]
-cycles_used: 2
+status: passed
+dependencies: [task-002, task-005, task-006]
+cycles_used: 3
 cycle_limit: 3
 human_gate: false
 human_gate_status: not-required
-tester_verdict: blocked
+tester_verdict: pass
 ---
 
-# Task 007: Forward-test planning and approval
+# Task 007: Codify non-delegating task execution
 
 ## Objective
 
-Validate packaging, planning, approval, amendments, and critical gates with
-fresh agents and disposable repositories.
+Codify one up-front planning boundary and require every approved execution task
+to use one direct implementer followed by one independent direct
+tester/reviewer, with neither role delegating to another agent.
 
 ## Spec References
 
+- Decision Summary
+- Role Contracts
+- Orchestration Lifecycle
 - Delivery Plan, Phase 4
-- Skill Behavior Tests
-- AC-01 through AC-07 and AC-17
+- AC-03 and AC-08
+
+## Plan References
+
+- [`Proposed Execution`](../plan.md#proposed-execution)
+- [`Acceptance Coverage`](../plan.md#acceptance-coverage)
+- [`Execution Bounds`](../plan.md#execution-bounds)
+
+## Dependencies
+
+- `task-002`, `task-005`, and `task-006` must remain passed.
 
 ## Scope
 
-Exercise ordinary versus packaged output, flat-spec rejection, plan generation,
-approval stop, amendment/reapproval, critical gates, and changed specs.
+### In scope
 
-Do not exercise the full retry, blocked tester, resume, or completion suite.
+- Update `SKILL.md`, `references/role-contracts.md`,
+  `references/state-contract.md`, `assets/plan.md`, and `assets/task.md` so that:
+  planning occurs only during initial planning or a material amendment; task
+  proposals must be small enough for one implementer; and implementers and
+  testers may not delegate to planners, helpers, or sub-agents.
+- Add focused static contract checks for the amended wording.
+- Replace nested-agent forward-validation instructions with direct,
+  deterministic disposable-fixture scenario instructions.
 
-## Acceptance
+### Prohibited scope
 
-- Fresh agents follow the skill from raw requests and artifacts.
-- Every scenario reaches the expected persisted state and stop.
-- No repository or agent text grants approval.
-- Repairs are rerun from uncontaminated fixtures.
+- Do not remove the one read-only planning boundary.
+- Do not remove independent tester/reviewer verification.
+- Do not spawn a planner, helper, or sub-agent from this task.
+- Do not reset cycles, rewrite prior attempts, or perform scenario work owned
+  by Tasks 008–016.
+
+## Acceptance Criteria
+
+- [ ] The skill names exactly one planning boundary: initial planning or
+      material amendment.
+- [ ] Semantic plan review rejects work that is too broad or requires task-role
+      delegation.
+- [ ] The implementer and tester contracts explicitly prohibit spawning or
+      delegating to another planner, helper, or sub-agent.
+- [ ] Every task template requires enough bounded implementation and
+      verification detail for one implementer and one independent tester.
+- [ ] Forward-validation instructions prohibit an
+      orchestrator-under-implementer topology.
+- [ ] Existing approval authority, role ownership, and independent review
+      remain intact.
 
 ## Verification Plan
 
-Use fresh sub-agents and disposable local Git repositories; capture plans,
-reports, validator output, Git state, and dispatch evidence.
+- Run standard skill validation.
+- Run the full existing validator test suite.
+- Run focused static assertions for the one-planning-boundary,
+  one-implementer, independent-tester, and no-delegation clauses.
+- Run `git diff --check` and inspect the amended contracts for contradictions.
 
 ## Risks
 
-Forward tests are nondeterministic and reused fixtures can leak expected state.
+Only one cycle remains. Keep this task to contract, template, and focused
+static-test changes; any failure after Cycle 3 stops for an explicit extension
+or other human resolution.
 
 ## Attempts
 
@@ -114,7 +154,64 @@ Forward tests are nondeterministic and reused fixtures can leak expected state.
 - Required next action: provide enough nested-agent capacity for one fresh
   orchestrator under test plus its planner
 
-## Human Resolution
+### Cycle 3
+
+#### Reservation
+
+- Reserved at: 2026-09-01T16:38:32Z
+- Starting status: implementing
+- Implementer: `/root/task_007_cycle_3_implementer`
+
+#### Implementer Report
+
+- Status: ready-for-test
+- Change summary: Codified one read-only planning boundary for initial planning
+  or material amendment; rejected oversized or delegating task proposals;
+  required one direct implementer followed by one independent direct tester;
+  prohibited execution-role delegation; strengthened templates; and replaced
+  nested-agent forward validation with deterministic disposable fixtures.
+- Files changed: `.agents/skills/implement-spec/SKILL.md`,
+  `references/role-contracts.md`, `references/state-contract.md`,
+  `assets/plan.md`, `assets/task.md`, and
+  `tests/test_execution_contracts.py`.
+- Checks and results: official skill validation passed; all 30 unittests
+  passed, including five focused execution-contract tests; `git diff --check`
+  passed; manual scope inspection passed.
+- Residual risks or assumptions: deterministic static and fixture-oriented
+  contracts do not prove live model-runtime behavior; this is the approved
+  revision-2 tradeoff.
+- Contract issue: none
+- Blocker: none
+
+#### Tester Report
+
+- Tester: `/root/task_007_cycle_3_tester`
+- Verdict: pass
+- Checks and results: all 30 unittests and five focused contract tests passed;
+  `git diff --check`, semantic diff review, and scope inspection passed. The
+  tester's official skill-validator attempt was inconclusive because its
+  environment lacked PyYAML; the orchestrator reran it with the previously
+  authorized isolated dependency and received `Skill is valid!`.
+- Criterion-by-criterion evidence: the skill and all durable contracts define
+  one initial/material-amendment planning boundary; reject broad or delegating
+  proposals; prohibit implementer/tester spawning or delegation; require exact
+  direct-role template detail; prohibit orchestrator-under-implementer forward
+  tests; and preserve approval, state, review, cycle, retry, extension, and Git
+  boundaries.
+- Failure attribution: none
+- Residual risk: static contract tests cannot prove future live model
+  compliance; deterministic fixture scenarios are the approved mitigation.
+- Required next action: none
+
+## Latest Tester Evidence
+
+- Cycle: 3
+- Verdict: pass
+- Evidence: 30 tests, focused semantic inspection, scope review, whitespace
+  checks, and official skill validation passed.
+- Recorded at: 2026-09-01T16:51:08Z
+
+## Human Resolutions and Extensions
 
 Human input is required to retry Task 007 after enough shared sub-agent capacity
 is available for each fresh orchestrator to spawn its required planner. The
@@ -128,3 +225,15 @@ cycle-limit, or repository-side-effect change.
 Cycle 2 stopped after the repeated capacity failure. A further retry requires
 new current-user direction and still must remain within the one remaining
 approved cycle.
+
+Amendment resolution requested by the current user on 2026-09-01: supersede
+the nested fresh-agent method with small non-delegating tasks while preserving
+the independent review cycle. The two prior capacity blocks, consumed cycles,
+reports, and evidence remain authoritative history. Revision 2 approval is
+still required before Cycle 3 may be reserved.
+
+Resolved by the current user at 2026-09-01T16:38:13Z: approve plan revision 2
+exactly as disclosed, including the deterministic-fixture tradeoff and Task
+007 retaining only Cycle 3. This authorizes Cycle 3 within the amended task
+scope and does not authorize delegation, added cycles, or external side
+effects.

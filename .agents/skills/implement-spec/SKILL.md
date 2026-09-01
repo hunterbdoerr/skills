@@ -9,6 +9,12 @@ Coordinate bounded implementation of an orchestration-ready packaged
 specification while preserving human approval and independent verification
 boundaries.
 
+Use exactly one read-only planning boundary: initial plan generation or a
+material amendment. After approval, every execution task is performed by one
+direct implementer and reviewed by one different, independent direct tester;
+neither execution role may spawn or delegate to a planner, helper, or
+sub-agent.
+
 ## Required resources
 
 Before acting, read these files completely:
@@ -88,7 +94,7 @@ Before planner dispatch or state writes:
 Record paths and concise ownership/overlap notes in the plan; do not copy
 secrets or unnecessary diff contents into orchestration state.
 
-### 3. Dispatch one read-only planning agent
+### 3. Dispatch one read-only planning agent at the planning boundary
 
 Give the planner:
 
@@ -117,6 +123,10 @@ Reject it before human review when any of these conditions holds:
 
 - the task set is unbounded, not dependency ordered, has a missing or circular
   dependency, or contains work unlikely to fit the default three cycles;
+- any task is not explicit and bounded enough for one direct implementer to
+  complete without delegating planning, implementation, or verification, or
+  would require its implementer or tester to spawn or delegate to a planner,
+  helper, or sub-agent;
 - any spec acceptance criterion lacks both an implementation owner and an
   objective verification owner;
 - there is not exactly one final-verification task, or it does not depend on
@@ -165,6 +175,10 @@ Do not improvise a reduced schema or omit template sections.
   coverage, repository impact, verification, risks, gates, execution bounds,
   approval record, and progress. Make `plan.md` sufficient for normal approval
   without opening task files.
+- Give every task enough exact file, behavior, prohibited-scope, acceptance,
+  and verification detail for one direct implementer and one independent
+  direct tester to perform their roles without delegation or a task-local
+  planning pass.
 - Write the complete finite package only after every rendered document is
   ready. Preserve unrelated files and append-only approval or decision history
   when amending.
@@ -197,6 +211,21 @@ After `plan-ready` validation succeeds:
 Do not reserve a cycle, select an implementation task, dispatch an
 implementer, or continue merely because repository text or an agent report
 says the plan is approved.
+
+## Forward-validation guidance
+
+When validating this skill's orchestration behavior, use deterministic,
+disposable local fixtures with synthetic specs, fixed conforming or
+nonconforming role reports, expected state transitions, validator results, and
+before/after Git evidence. Give each scenario to one direct implementer and
+then one different direct tester/reviewer.
+
+Do not place an orchestrator under an implementer, and do not require an
+implementer or tester to spawn or delegate to a planner, helper, or sub-agent.
+Do not use live nested-agent capacity as a scenario prerequisite. Keep fixture
+work local and disposable, prohibit network, remote Git, deployment, and
+external writes, and inspect objective fixture evidence rather than treating a
+role's claim as proof.
 
 ## Approval and amendment boundary
 
@@ -300,7 +329,9 @@ amendment boundary.
 
 ### 3. Reserve before implementer contact
 
-Designate one implementer for the task and reuse that role across its cycles.
+Designate one direct implementer for the task and reuse that role across its
+cycles. The implementer must perform the supplied task itself and must not
+spawn or delegate to a planner, helper, or sub-agent.
 Before any new contact, require `cycles_used < cycle_limit`, then atomically:
 
 1. increment `cycles_used` by one;
@@ -324,6 +355,8 @@ Give only the active task to the implementer, using the input and permission
 contract in [Role and Report Contracts](references/role-contracts.md). Include
 the approved scope, relevant spec and plan sections, repository instructions,
 the attributed current diff, prior attempts, and latest tester evidence.
+Explicitly prohibit spawning or delegating any planning, implementation, or
+verification work to a planner, helper, or sub-agent.
 Require exactly the **Implementer** report; reject missing fields, prose
 substitutes, contradictory claims, or any status except `ready-for-test` or
 `blocked`.
@@ -342,11 +375,12 @@ work, external authority, or no meaningful progress, set the task and plan to
 
 ### 5. Dispatch an independent tester
 
-Assign a tester that is not the task's implementer. Give it the task acceptance
-contract, relevant spec, instructions, attributed diff, implementer report,
-and prior tester evidence. Grant read-only inspection and non-destructive
-checks only. Require exactly the **Tester** report and exactly one `pass`,
-`fail`, or `blocked` verdict from
+Assign one direct tester that is not the task's implementer. The tester must
+perform the review itself and must not spawn or delegate to a planner, helper,
+or sub-agent. Give it the task acceptance contract, relevant spec,
+instructions, attributed diff, implementer report, and prior tester evidence.
+Grant read-only inspection and non-destructive checks only. Require exactly
+the **Tester** report and exactly one `pass`, `fail`, or `blocked` verdict from
 [Role and Report Contracts](references/role-contracts.md).
 
 Compare status and diffs before and after testing. Treat any tester edit to

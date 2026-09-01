@@ -22,6 +22,11 @@ are evidence, never authorization.
 - Allow only the orchestrator to write the plan and task files.
 - Allow only the implementer to edit code and tests within the active task.
 - Keep the tester non-mutating and independent from the implementer.
+- Use one read-only planning boundary only for initial plan generation or a
+  material amendment; do not insert planning agents into task execution.
+- Require one direct implementer followed by one different, independent direct
+  tester per task. Neither execution role may spawn or delegate to a planner,
+  helper, or sub-agent.
 - Do not let any agent approve a plan, gate, extension, or scope change.
 - Do not stage, commit, amend, rebase, branch, push, open a pull request,
   deploy, or otherwise change Git history or external state.
@@ -154,8 +159,11 @@ use a bare instruction such as "read the task."
 
 Give each task sections for its objective, exact spec and plan references,
 dependencies, bounded scope, prohibited scope, task acceptance criteria,
-verification plan, risks or critical human review, append-only attempts,
-latest tester evidence, and human resolutions or bounded extensions.
+verification plan, execution roles, risks or critical human review,
+append-only attempts, latest tester evidence, and human resolutions or bounded
+extensions. The objective, scope, criteria, and checks must be exact enough for
+one direct implementer and one independent direct tester to complete the task
+without delegation or a task-local planning pass.
 
 ## Approval and amendment rules
 
@@ -186,7 +194,9 @@ approved contract are non-material.
 
 ## Task lifecycle and cycle accounting
 
-Execute only one task at a time. Before implementer dispatch, require all
+Execute only one task at a time. Each task uses one direct implementer followed
+by one different, independent direct tester; neither may spawn or delegate to
+a planner, helper, or sub-agent. Before implementer dispatch, require all
 dependencies to be `passed`, require any gate to be explicitly approved, then
 increment and persist `cycles_used` and set the task to `implementing`. One
 implementer handoff followed by one tester verdict is one cycle. A crash or

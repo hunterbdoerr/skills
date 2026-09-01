@@ -28,6 +28,12 @@ deploy, or perform external writes.
 Reports are returned to the orchestrator. Sub-agents do not write
 `implementation/plan.md` or `implementation/tasks/*.md`.
 
+There is exactly one read-only planning boundary, used only for initial plan
+generation or a material amendment. Execution roles are direct roles: each
+task has one implementer followed by one different, independent tester. An
+implementer or tester must not spawn or delegate to a planner, helper, or
+sub-agent.
+
 ## Orchestrator
 
 The orchestrator validates state, dispatches one eligible role at a time,
@@ -58,7 +64,10 @@ amending.
 
 The planner may inspect the supplied sources and propose a finite,
 dependency-ordered plan. It must not edit files, implement code, approve its
-own plan, or omit known risk or uncertainty.
+own plan, or omit known risk or uncertainty. It operates only at initial plan
+generation or a material amendment, never inside execution of an approved
+task. Every proposed task must be explicit and bounded enough for one direct
+implementer and one independent direct tester without task-role delegation.
 
 ### Report schema
 
@@ -104,12 +113,18 @@ Final verification:
 Blocker: <required when blocked; otherwise none>
 ```
 
+For a `ready` report, **Task list** and **Acceptance coverage** must each be
+populated. For a `blocked` report, either section may instead contain the sole
+exact bullet `- none`; no other empty or `none` representation is valid.
+
 Require exactly one final-verification task and make it depend on all
 implementation tasks. Reject the report before human review if any spec
 criterion is unmapped, a task is unlikely to fit the default three cycles,
 dependencies are missing or circular, a non-goal is included, verification is
-subjective, a risk is hidden, or implementation would have to invent an
-unresolved decision.
+subjective, a risk is hidden, implementation would have to invent an
+unresolved decision, or a task is too broad for one direct implementer or
+requires its implementer or tester to spawn or delegate to a planner, helper,
+or sub-agent.
 
 ## Implementer
 
@@ -125,7 +140,9 @@ The implementer may edit only in-scope code and tests for the active task and
 may run proportionate checks. It must not edit orchestration state, work on a
 different task, change approval or acceptance criteria, broaden scope, perform
 Git history or remote actions, or conceal an insufficient or contradictory
-task contract.
+task contract. It must perform the task itself and must not spawn or delegate
+planning, implementation, verification, or other task work to a planner,
+helper, or sub-agent.
 
 ### Report schema
 
@@ -173,7 +190,9 @@ Do not provide authority to edit the implementation.
 The tester may inspect files and run non-destructive verification. It must not
 edit production code, tests, or orchestration state; repair a defect; weaken
 criteria; or treat the implementer's claims as evidence without checking them.
-The tester must remain a different role from the implementer.
+The tester must remain a different role from the implementer, perform the
+review itself, and must not spawn or delegate verification or other task work
+to a planner, helper, or sub-agent.
 
 ### Report schema
 

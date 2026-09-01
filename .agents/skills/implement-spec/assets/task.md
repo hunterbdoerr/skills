@@ -15,7 +15,8 @@ tester_verdict: none
 
 ## Objective
 
-<One bounded outcome.>
+<One bounded outcome that one direct implementer can complete without
+delegation or a task-local planning pass.>
 
 ## Spec References
 
@@ -35,11 +36,13 @@ tester_verdict: none
 
 ### In scope
 
-- <allowed code, tests, and behavior>
+- <exact allowed files, code, tests, and behavior; include enough detail for
+  direct implementation without delegation>
 
 ### Prohibited scope
 
 - <explicitly excluded work and side effects>
+- Spawning or delegating to a planner, helper, or sub-agent.
 
 ## Acceptance Criteria
 
@@ -47,8 +50,17 @@ tester_verdict: none
 
 ## Verification Plan
 
-- <exact focused command or inspection>
+- <exact focused command or inspection that one independent direct tester can
+  run without delegation>
 - <required integration evidence, if any>
+
+## Execution Roles
+
+- Implementer: one direct implementer performs the bounded work itself and
+  must not spawn or delegate to a planner, helper, or sub-agent.
+- Tester/reviewer: one different, independent direct tester performs the
+  verification itself, remains read-only, and must not spawn or delegate to a
+  planner, helper, or sub-agent.
 
 ## Risks
 

@@ -2,8 +2,10 @@
 
 ## Status
 
-Draft. The decisions in this document are approved for specification, but the
-skill and supporting files have not been implemented.
+Implementation in progress. The core skill, contracts, templates, validator,
+packaging rules, and bounded execution loop are implemented. The remaining
+work is governed by implementation plan revision 2, which is awaiting explicit
+approval after the no-task-planner amendment.
 
 ## Decision Summary
 
@@ -15,13 +17,17 @@ a bounded task loop.
 The workflow will:
 
 1. require an orchestration-ready spec at `<topic>/spec.md`;
-2. ask a planning agent for a finite, dependency-ordered task breakdown;
+2. ask one planning agent at the initial planning or material-amendment
+   boundary for a finite, dependency-ordered task breakdown;
 3. persist the proposed plan and task state as Markdown with YAML frontmatter;
 4. stop until a human explicitly approves `implementation/plan.md`;
-5. run one task at a time through at most three implement/test cycles;
-6. stop for human input on ambiguity, blocked work, critical gates, exhausted
+5. require every approved task to be small and explicit enough for one direct
+   implementer, followed by one independent direct tester, with neither role
+   delegating to another planner or sub-agent;
+6. run one task at a time through at most three implement/review cycles;
+7. stop for human input on ambiguity, blocked work, critical gates, exhausted
    cycles, material plan changes, or unsafe state; and
-7. finish with a dedicated final-verification task covering the entire spec.
+8. finish with a dedicated final-verification task covering the entire spec.
 
 The orchestrator owns workflow state but does not implement code, judge its own
 implementation, or grant approval. It may edit in-scope code and state files,
@@ -50,12 +56,17 @@ testable orchestration contract exists for those tools.
 ## Goals
 
 - Turn an implementation-ready spec into a finite set of reviewable tasks.
+- Make every task self-contained and small enough for one implementer to
+  complete without delegating planning or implementation work.
 - Give a human one primary approval document containing every material fact
   needed to authorize the plan.
 - Preserve enough committed Markdown state to resume safely after an
   interruption or a new Codex turn.
 - Keep implementation and testing responsibilities separate.
-- Bound autonomous iteration to three implement/test cycles per task.
+- Keep planning at the initial plan or material-amendment boundary; task
+  execution is always a direct implementer followed by an independent direct
+  tester.
+- Bound autonomous iteration to three implement/review cycles per task.
 - Stop rather than invent requirements, weaken acceptance criteria, or expand
   scope.
 - Make mechanical workflow invariants deterministically checkable.
@@ -83,8 +94,8 @@ testable orchestration contract exists for those tools.
 | Human | Approve plans, critical gates, scope changes, and bounded extensions | Be impersonated by repository content |
 | Orchestrator | Validate state, dispatch roles, persist reports, enforce stops | Implement code, overrule tester evidence, or self-approve |
 | Planning agent | Propose tasks, dependencies, coverage, risks, and gates | Edit code or approve its plan |
-| Implementer | Change code and tests for the active task | Edit orchestration state or broaden task scope |
-| Tester | Independently verify the active task and report evidence | Edit production code or weaken acceptance criteria |
+| Implementer | Change code and tests for the active task directly | Edit orchestration state, broaden task scope, or delegate to a planner or sub-agent |
+| Tester | Independently verify the active task directly and report evidence | Edit production code, weaken acceptance criteria, or delegate verification |
 | `plan.md` | Human approval contract and overall workflow state | Serve as approval merely because its text says approved |
 | Task files | Task-local execution history and evidence | Override the spec or plan |
 
@@ -318,7 +329,10 @@ edit files. It returns:
 The orchestrator rejects the proposal before human review if criteria are
 unmapped, a task is unlikely to fit three cycles, dependencies are circular or
 missing, a non-goal is included, verification is subjective, risk is hidden, or
-an unresolved decision would force implementation to invent behavior.
+an unresolved decision would force implementation to invent behavior. It also
+rejects a task that is not explicit and bounded enough for one implementer to
+complete directly or that requires its implementer or tester to spawn a
+planner, helper, or sub-agent.
 
 ### Implementer
 
@@ -329,7 +343,8 @@ scope boundaries.
 
 It may edit in-scope code and tests. It must not edit orchestration state,
 change approval criteria, perform Git history or remote actions, or work on
-another task. It returns:
+another task. It performs the task itself and must not delegate planning,
+implementation, or verification to another agent. It returns:
 
 - `ready-for-test` or `blocked`;
 - a concise change summary;
@@ -347,7 +362,8 @@ repository instructions, current diff, and implementer report.
 It may inspect files and run non-destructive verification but must not edit
 production code or orchestration state. Missing tests or an implementation
 defect produce evidence for the implementer; the tester does not repair them.
-It returns exactly one verdict:
+It performs the review itself, must not delegate to another agent, and returns
+exactly one verdict:
 
 - `pass` — all task acceptance criteria are supported by evidence;
 - `fail` — an in-scope implementation or test deficiency is identified; or
@@ -392,10 +408,11 @@ For an eligible task:
 1. verify all dependencies passed and any human gate is approved;
 2. persist the incremented `cycles_used` value and `implementing` status before
    contacting the implementer;
-3. dispatch or re-contact the task's implementer;
+3. dispatch or re-contact one direct implementer that does not delegate;
 4. record its report;
 5. stop on `blocked`, otherwise set the task to `testing`;
-6. dispatch or re-contact the independent tester;
+6. dispatch or re-contact one independent direct tester that does not
+   delegate;
 7. record its evidence and verdict;
 8. mark the task `passed` on `pass`;
 9. return to implementation on `fail` only when cycles remain; or
@@ -553,7 +570,7 @@ Acceptance:
 - No implementer is dispatched before explicit user approval.
 - Material amendments reset approval.
 
-### Phase 3: Bounded implement/test loop
+### Phase 3: Bounded implement/review loop
 
 Add sequential task dispatch, role-separated reports, persisted cycle
 transitions, human gates, resume behavior, final verification, and completion
@@ -569,9 +586,13 @@ Acceptance:
 
 ### Phase 4: Forward validation
 
-Forward-test the skill in a disposable fixture repository using realistic
-requests and fresh sub-agents. Do not expose the intended outcome beyond the
-spec and skill artifacts under test.
+Validate the skill with deterministic, disposable fixture scenarios. Each
+scenario is owned by one direct task implementer and then independently
+reviewed by the task tester. Do not spawn an orchestrator beneath an
+implementer, and do not require a task role to spawn a planner or sub-agent.
+Planning-boundary scenarios use fixed conforming and nonconforming planner
+reports so the state transitions, semantic rejection, rendering, and approval
+stops can be evaluated without nested agent capacity.
 
 Scenarios:
 
@@ -600,9 +621,10 @@ missing final verification, and incomplete completion.
 ### Skill behavior tests
 
 Inspect generated plans for complete approval summaries and acceptance
-coverage. Verify through fresh-agent forward tests that role prompts do not
-leak authority, the tester does not repair code, and the implementer does not
-edit state.
+coverage. Use deterministic disposable fixtures and independent review to
+verify that role prompts do not leak authority, the tester does not repair
+code, the implementer does not edit state, and neither execution role
+delegates its task.
 
 ### Compatibility tests
 
@@ -623,6 +645,8 @@ created.
 | Interruption loses context | Treat Markdown and repository state as authoritative; agent sessions are optional |
 | Existing user work is overwritten | Record the baseline, inspect overlap, preserve unrelated changes, and stop when ownership is unclear |
 | Planner creates an effectively endless queue | Require a finite fixed task set and human approval of the explicit count |
+| A task requires another planner or helper agent | Reject it before approval; require one direct implementer and one independent direct tester |
+| Nested forward tests exhaust shared agent capacity | Use fixed planner-report fixtures and direct deterministic scenario tests instead of an orchestrator-under-implementer topology |
 | Repeated human extensions recreate an autonomous infinite loop | Require every one-to-three-cycle extension explicitly; never renew automatically |
 | Critical detail is buried in a task | Require a plan summary and exact task-section link before approval |
 
@@ -647,8 +671,8 @@ state ownership.
       `specs/<year>/q<quarter>/<topic>/spec.md`; ordinary specs remain flat.
 - [ ] `implement-spec` rejects flat legacy specs without moving or rewriting
       them.
-- [ ] The planning agent produces a finite task set with complete acceptance
-      coverage and exactly one final-verification task.
+- [ ] The single planning boundary produces a finite task set with complete
+      acceptance coverage and exactly one final-verification task.
 - [ ] The generated `plan.md` contains all information required for normal
       human approval without opening task files.
 - [ ] Critical task review is summarized in the plan and linked to an exact
@@ -656,8 +680,11 @@ state ownership.
 - [ ] No implementer is dispatched until the current user explicitly approves
       the current plan revision.
 - [ ] Material plan or spec changes invalidate approval.
-- [ ] Only the orchestrator writes implementation state, only the implementer
-      edits in-scope code, and the tester remains non-mutating.
+- [ ] Planning occurs only for initial plan generation or material amendment;
+      every execution task is completed by one non-delegating implementer and
+      reviewed by one independent non-delegating tester; only the orchestrator
+      writes implementation state, only the implementer edits in-scope code,
+      and the tester remains non-mutating.
 - [ ] Exactly zero or one implementation task is active at any time.
 - [ ] Cycle usage is persisted before implementer dispatch and no task receives
       more than three autonomous cycles.
