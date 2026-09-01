@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implement Spec"
+  short_description: "Orchestrate bounded implementation from approved specs"
+  default_prompt: "Use $implement-spec to turn this orchestration-ready packaged spec into a human-approved plan and coordinate its bounded implementation and independent verification."
