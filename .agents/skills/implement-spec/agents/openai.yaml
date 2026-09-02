@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implement Spec"
+  short_description: "Implement approved spec tasks with review"
+  default_prompt: "Use $implement-spec to implement this specification through an approved task list and independent review."
