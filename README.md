@@ -20,4 +20,4 @@ The canonical skill source lives in `.agents/skills`. The portable `build-spec-c
 
 Start with `$build-spec-context` in Codex or `/build-spec-context` in Claude Code and Copilot when an idea still needs discovery. Then invoke `$write-spec` or `/write-spec` to turn the resulting context packet into a specification. Natural-language requests can also match either skill automatically.
 
-`implement-spec` is Codex-only and is discovered directly at `.agents/skills/implement-spec`; it has no Claude Code or GitHub Copilot symlink. It accepts any implementation-ready Markdown spec and uses Codex's current plan and conversation instead of creating repository workflow state.
+`implement-spec` is Codex-only and is discovered directly at `.agents/skills/implement-spec`; it has no Claude Code or GitHub Copilot symlink. It accepts any implementation-ready Markdown spec. Single-task work uses the current Codex plan and conversation; multi-task work moves the spec into a dedicated directory, retains shared repository discovery in `context.md`, and persists each approved task as a small Markdown file so fresh agents and later Codex tasks can resume it.
