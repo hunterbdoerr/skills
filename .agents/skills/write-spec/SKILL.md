@@ -25,9 +25,7 @@ Produce a decision-dense specification that reflects the repository's actual sta
 - Check handoff readiness. If a material product rule, ownership boundary, source of truth, security decision, or failure policy is missing, use `build-spec-context` before drafting. Proceed with bounded open questions only when they do not force the design to be invented.
 - Read repository instructions and locate existing specs, design docs, issue templates, and relevant engineering guidance.
 - Sample several recent specs of the same kind. Follow their location, naming, tone, decision density, and section choices rather than copying one outline mechanically.
-- For an ordinary spec, use the existing flat destination convention: `specs/<year>/q<quarter>/<topic>.md`.
-- Only when the user explicitly requests a spec for the `implement-spec` workflow, use the orchestration-ready destination `specs/<year>/q<quarter>/<topic>/spec.md`. In that mode, create only `spec.md`; `implement-spec` owns any later `implementation/plan.md` and task state.
-- Do not move or convert existing flat specs into orchestration-ready packages automatically.
+- Unless the user or repository specifies another location, use the existing flat destination convention: `specs/<year>/q<quarter>/<topic>.md`.
 - Read [references/application-spec-patterns.md](references/application-spec-patterns.md) when working in the application repository or when its archetypes fit the target repository. Otherwise use [references/spec-structure.md](references/spec-structure.md) as a fallback.
 - Decide whether one document is sufficient. Separate a stable architecture/behavior decision from a mutable delivery/status plan when they have different audiences or update lifecycles.
 - Ask a question only when the missing answer would materially change the scope or architecture and cannot be discovered. Otherwise state a bounded assumption or record an open question.
