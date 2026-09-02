@@ -1,4 +1,4 @@
 interface:
   display_name: "Implement Spec"
-  short_description: "Implement and resume specs with fresh agents"
-  default_prompt: "Use $implement-spec to implement or resume this specification with retained repository context, persistent task status, and independent review."
+  short_description: "Implement Application specs with fresh agents"
+  default_prompt: "Use $implement-spec to plan, implement, or resume this Application specification with repository-specific standards, persistent task contracts, and independent review."

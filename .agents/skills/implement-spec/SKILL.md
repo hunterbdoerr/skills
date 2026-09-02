@@ -1,20 +1,22 @@
 ---
 name: implement-spec
-description: Implement or resume an implementation-ready Markdown specification through a user-approved task list, retained repository context and Git-persistent task files for multi-task work, and a sequential fresh-implementer/reviewer loop. Use when asked to implement, execute, continue, or resume work from a spec with separate implementation and independent review.
+description: Implement or resume an implementation-ready Markdown specification in the Application repository through a user-approved task list, Application-aware planning agents, retained repository context, comprehensive Git-persistent task files, and a sequential fresh-implementer/reviewer loop. Use when asked to implement, execute, continue, or resume Application work from a spec with separate planning, implementation, and independent review.
 ---
 
 # Implement Spec
 
-Implement a spec through one approved plan and a sequential implementation and
-review loop. Keep single-task work conversation-native. For a spec requiring
-two or more implementation tasks, persist reusable repository discovery and
-the approved plan in small Markdown files so later agents can resume without
-inheriting the earlier conversation.
+Implement a spec in the Application repository through one approved plan,
+task-focused planning agents, and a sequential implementation and review loop.
+Keep single-task work conversation-native. For two or more tasks, persist
+reusable repository discovery and comprehensive task contracts so later agents
+can resume without inheriting the earlier conversation.
 
 ## Prepare the work
 
 1. Read the complete spec, applicable repository instructions, relevant code
    and tests, and the current working-tree state.
+   Resolve the Application root containing `bend/`, `fend/`, `pfend/`, and
+   `.github/skills/`; stop if the work is not in that repository.
 2. Stop if a missing requirement or ownership decision would force invention.
 3. Break the spec into a finite, dependency-ordered task list. Give each task
    one bounded outcome, important scope boundaries, and objective acceptance
@@ -38,18 +40,9 @@ After approval, if the plan has two or more tasks, persist it before dispatch:
    - shared constraints and decisions;
    - focused and repository-level verification commands; and
    - cross-task risks or integration boundaries.
-3. Create one file per approved task at
+3. Create one skeleton file per approved task at
    `tasks/NN-short-imperative-slug.md`. Keep filenames and task numbers stable.
-4. Include only these sections in each task file:
-   - `# NN Task title`
-   - `Status: pending | in-progress | blocked | complete`
-   - `Depends on:` task numbers or `none`
-   - `## Outcome`
-   - `## Scope`
-   - `## Acceptance checks`
-   - `## Notes` for concise implementation, verification, review, or blocker
-     evidence
-5. Treat the approved files as Git-persistent workflow state. Do not create an
+4. Treat the approved files as Git-persistent workflow state. Do not create an
    additional manifest, journal, schema, or generated state file.
 
 Create the files only after approval, so their presence means the task list was
@@ -63,6 +56,73 @@ this file: revalidate affected sections when HEAD or referenced files change,
 and promote a task discovery into it only when later tasks will benefit.
 Task-specific evidence stays in that task's `## Notes`.
 
+## Refine every task
+
+After approval—and after persistence for multi-task work—refine every approved
+task. For a single task, keep the refined contract in the Codex plan and
+conversation rather than creating a task file:
+
+1. Create a fresh, read-only planning agent for each task. Run independent
+   planners in parallel when practical. Give each planner the complete spec,
+   `context.md`, the coarse task, the complete approved task list, relevant
+   dependency summaries, repository-instruction paths, and current repository
+   state. Do not use a planner as that task's implementer or reviewer.
+2. Require the planner to inspect Application rather than rely on generic
+   conventions:
+   - read root `AGENTS.md` and every scoped `AGENTS.md` that can govern likely
+     changes;
+   - inspect matching `.github/instructions` files;
+   - scan `.github/skills/*/SKILL.md` descriptions, then read every matching
+     skill completely;
+   - select relevant architecture, best-practice, testing, security, migration,
+     operations, and pull-request documents under `docs/`;
+   - inspect nearby code, tests, and reference implementations; and
+   - derive exact workspace commands from `AGENTS.md`, package scripts,
+     justfiles, and pre-commit routing.
+3. Require the planner to return repository-backed task content without
+   editing files. It may refine how to accomplish the approved outcome but may
+   not add work, change ordering or dependencies, or materially alter scope or
+   acceptance. It must flag such a need as a proposed amendment. If reliable
+   refinement needs a missing product decision or cannot resolve conflicting
+   repository evidence, stop before implementation and request the smallest
+   user decision. Mark the skeleton task exactly `Status: blocked` and record
+   the reason in `## Notes`; keep commentary out of the status value.
+4. Reconcile planner outputs across task boundaries, remove duplication with
+   `spec.md` and `context.md`, and write each task file with:
+   - `# NN Task title`
+   - `Status: pending | in-progress | blocked | complete`
+   - `Depends on:` task numbers or `none`
+   - `Planning baseline:` commit
+   - `## Outcome`
+   - `## Rationale`
+   - `## Scope` with `### Included` and `### Excluded`
+   - `## Relevant context` with spec/context references, paths, symbols, tests,
+     and dependency outputs
+   - `## Applicable standards` listing each instruction or document, why it
+     applies, and the concrete requirements carried into the task
+   - `## Required skills` listing planning, implementation, or review phase,
+     skill path/name, and why it must be loaded
+   - `## Reference implementations`
+   - `## Implementation guidance` with an expected sequence, likely
+     touchpoints, constraints, and invariants; treat guidance as informative
+     unless the spec makes a choice mandatory
+   - `## Acceptance checks`
+   - `## Verification` with exact working directories, commands, and any manual
+     checks, ordered from focused feedback to the final gate
+   - `## Risks and edge cases`
+   - `## Notes` for concise implementation, verification, review, or blocker
+     evidence
+5. Present any material amendment for user approval before editing the affected
+   task files or dispatching implementation. Ordinary repository-backed detail
+   within the approved boundary needs no second approval.
+
+Select standards and skills; do not dump the full Application catalog into
+every task. Always include root `AGENTS.md`, then add only scoped instructions,
+docs, and skills that materially apply. Require `write-tests` when tests are
+added or modified. Require `code-review` for review and route it to every
+affected backend or frontend reference. Preserve Application's verification
+ladder, workspace ownership, and banned-command guidance in task commands.
+
 When resuming, prefer persisted task files over conversation state. Read the
 complete spec, `context.md`, and every task file; inspect the working tree and
 relevant code; revalidate stale context; verify claimed completed work; and
@@ -72,6 +132,11 @@ Do not redispatch a verified `complete` task. If files and repository evidence
 disagree, mark the affected task `blocked` and request the smallest user
 decision instead of guessing. If a multi-task approved plan cannot be
 reconstructed reliably, propose a fresh plan and request approval.
+
+Before dispatching a task, revalidate its planning baseline, affected
+instructions and skills, referenced files, dependency outputs, and commands
+against the current working tree. Refresh stale task detail inside the approved
+boundary; request approval for a material amendment.
 
 Do not require a special spec location or package shape. Accept any readable
 implementation-ready Markdown spec identified by the user.
@@ -86,7 +151,8 @@ Process one approved task at a time:
    implementer from an earlier task. Provide the complete spec, `context.md`
    when present, the active task file, relevant completed-task notes,
    repository-instruction paths, current diff context, and acceptance checks.
-   Require it to verify the retained context relevant to its task.
+   Require it to load every implementation skill listed in the task and verify
+   the retained context relevant to its task.
 3. Tell the implementer to perform the work directly, stay inside the active
    task, preserve unrelated changes, run focused checks, and report either
    `ready-for-review` or `blocked` with evidence.
@@ -94,7 +160,9 @@ Process one approved task at a time:
    evidence, stop before review, and request the smallest decision needed.
 5. Inspect the resulting diff. Stop if scope or change ownership is unclear.
 6. Assign review to a different, fresh agent. Give it the task, acceptance
-   checks, relevant diff, and implementer results. Keep the reviewer read-only.
+   checks, relevant diff, and implementer results. Keep the reviewer read-only
+   and require it to load Application's `code-review` skill plus every other
+   review skill listed in the task.
 7. Require one evidence-backed verdict:
    - `pass`: every acceptance check is satisfied;
    - `changes-required`: specific in-scope deficiencies remain; or
