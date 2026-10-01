@@ -96,6 +96,8 @@ Define compatibility constraints, deployment order, feature gating, monitoring, 
 
 - Lead with decisions and behavior, not a diary of investigation.
 - Mark facts, proposals, assumptions, and open questions distinctly.
+- Require every normative section, delivery item, and acceptance criterion to trace to a goal or a documented prerequisite of the requested outcome.
+- Do not turn an affected surface, nearby deficiency, preferred abstraction, or possible future need into committed work.
 - Prefer repository-relative links and exact verified identifiers.
 - Explain why for consequential constraints, especially security, data integrity, compatibility, and rollout order.
 - Keep future work clearly separated from the implementation-ready scope.

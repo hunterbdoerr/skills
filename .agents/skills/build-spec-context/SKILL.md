@@ -17,8 +17,27 @@ Turn an early idea or scattered evidence into a decision-rich context packet tha
 - Surface implications and contradictions proactively. Do not merely record the user's first answer.
 - Separate confirmed facts, repository evidence, proposed decisions, assumptions, and unresolved questions.
 - Separate requirements from technical implications. Do not silently promote a likely implementation into a business requirement.
+- Let discovery expand understanding, not committed scope. Finding an affected system, existing inconsistency, or desirable adjacent improvement does not make changing it part of the request.
 - Scale discovery to the change's ambiguity and risk. A small, well-bounded request may need one evidence pass and a compact handoff; do not force every discovery lens or packet section into every task.
 - Do not write the final specification or implement code unless the user explicitly asks to transition to that work.
+
+## Scope Admission
+
+Admit a behavior, deliverable, or changed surface to the current slice only when
+it is:
+
+- explicitly requested or confirmed by the user;
+- an evidence-backed prerequisite without which the requested outcome cannot be
+  correct, safe, compatible, or independently verified; or
+- required by repository instructions or established verification for the files
+  that the admitted work must change.
+
+For every non-obvious prerequisite, record why it is necessary and choose its
+narrowest sufficient form. Proximity in the codebase, consistency with adjacent
+features, reusable abstraction, cleanup, modernization, comprehensive coverage,
+and possible future demand are not sufficient reasons. Classify those items as
+optional or deferred. Do not ask the user to decide optional additions unless a
+choice is necessary to bound the requested slice.
 
 ## Workflow
 
@@ -26,6 +45,7 @@ Turn an early idea or scattered evidence into a decision-rich context packet tha
 
 - Identify the initial idea, problem, ticket, transcript, or document set and the repository in scope.
 - Capture any user-requested output shape, level of detail, constraints, exclusions, and decisions that intentionally depart from current behavior or precedent.
+- State a scope anchor: the requested observable outcome, intended actor, smallest useful slice, and explicit exclusions. Treat it as fixed until the user changes it.
 - Summarize the starting point in a few sentences and state the largest visible uncertainty.
 - Read [references/discovery-lenses.md](references/discovery-lenses.md) before beginning a new discovery interview.
 - Select the working mode:
@@ -38,6 +58,7 @@ Turn an early idea or scattered evidence into a decision-rich context packet tha
 - Read repository instructions and relevant existing specs, product docs, source, tests, configuration, schemas, and migrations.
 - Trace the current behavior through real entry points, ownership boundaries, data flows, and external integrations.
 - Extract claims from supplied documents with their source paths or links. Flag disagreements, stale claims, and missing evidence.
+- Distinguish surfaces that must change from surfaces inspected only to understand impact. Do not convert an impact map into a change list.
 - Share a concise current-state summary with the user before asking detailed questions. Include the evidence that materially changes the framing.
 
 For the first discovery response, provide:
@@ -64,7 +85,8 @@ For the first discovery response, provide:
 - Test boundary cases, invalid inputs, partial state, retries, concurrency, permissions, historical data, compatibility, and operational failure where applicable.
 - Look for business-rule collisions: precedence, exceptions, timing, ownership, lifecycle transitions, and what must never happen.
 - Map each proposed behavior to likely codebase surfaces and identify hidden coupling, migrations, deployment ordering, or test impact.
-- Challenge scope that cannot be delivered or verified independently; separate later work from the first useful slice.
+- Apply the scope-admission test to every proposed behavior and technical consequence. When hidden coupling is real, admit only the minimum accommodation needed by the current slice.
+- Challenge scope that cannot be delivered or verified independently; separate optional completeness, cleanup, and later work from the first useful slice.
 - Identify invariants explicitly, especially data that must not be lost, duplicated, exposed, or overwritten.
 
 ### 5. Maintain checkpoints
@@ -86,6 +108,7 @@ Use a checkpoint after a meaningful decision cluster or when the framing changes
 - Read [references/context-packet.md](references/context-packet.md) and produce a proportionate context packet in the conversation by default. Compress related sections for small changes; retain the distinctions among user direction, verified evidence, proposals, assumptions, and open questions.
 - If the user needs cross-session or cross-agent transfer, write the packet to a user-approved Markdown path.
 - Preserve source paths, links, decisions, dissent, assumptions, and unresolved questions. Do not erase uncertainty to make the packet look complete.
+- Include a compact scope-admission record for non-obvious included work: the item, whether it was requested or required, the evidence or invariant requiring it, and its narrowest boundary.
 - Mark readiness as **ready**, **ready with open questions**, or **not ready**. Explain any blocker and the decision needed.
 - Recommend the likely spec shape: product/implementation, architecture decision, operational workflow, focused contract/security change, delivery plan, or a paired architecture document and delivery plan.
 - When the user wants to proceed, apply the `write-spec` skill to the packet and repository evidence. Do not make the user restate the discovery.

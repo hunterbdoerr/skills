@@ -58,6 +58,17 @@ Summarize the current flow, entry points, ownership boundaries, data flow, and r
 
 Describe the smallest independently useful, verifiable scope.
 
+### Scope Admission
+
+List only non-obvious additions to the user's stated request.
+
+| Included item | Basis | Evidence or required invariant | Narrowest sufficient boundary |
+|---|---|---|---|
+| ... | User-requested / Required prerequisite / Repository-mandated | ... | ... |
+
+Do not put optional improvements or every technically affected surface in this
+table. Put desirable but unnecessary work under Deferred Follow-Ups.
+
 ## Actors and Business Requirements
 
 List actors, permissions, source-of-truth ownership, business rules, precedence, exceptions, and invariants.
@@ -127,6 +138,7 @@ List the behaviors and failure paths that require verification at each relevant 
 - Include rejected options only when they explain a consequential decision.
 - Mark user statements as confirmed requirements only after the user affirms them or their intent is unambiguous.
 - Treat repository conventions as presentation and implementation evidence, not as authority to rewrite confirmed user intent.
+- Require each non-obvious scope addition to pass the scope-admission test; an impact, risk, or nearby inconsistency alone does not make it committed work.
 - Mark agent-suggested defaults as proposed until accepted.
 - Preserve unresolved contradictions instead of choosing the most convenient source.
 - Do not invent a technical design to fill a business-policy gap.

@@ -27,7 +27,9 @@ Use these lenses as a prompt catalog, not a questionnaire. Select only questions
 ## Scope and sequencing
 
 - What is the smallest independently valuable first slice?
+- Which proposed additions are unavoidable prerequisites, and what evidence makes each unavoidable?
 - What is explicitly excluded even if it is adjacent or desirable?
+- Which affected surfaces need only compatibility awareness rather than a change?
 - Which dependencies or consumers must change first?
 - Which manual steps are acceptable initially, and which must be automated?
 - What follow-up work should remain possible without redesigning the first slice?

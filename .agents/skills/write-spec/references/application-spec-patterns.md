@@ -24,6 +24,7 @@ Strong application specs tend to:
 - define ownership and source-of-truth boundaries, not just components to edit;
 - make replacement, failure, retry, ordering, authorization, privacy, and compatibility semantics explicit when relevant;
 - use tables for exact mappings, contracts, ownership, risks, or current/target comparisons;
+- distinguish systems that must change from systems inspected only for impact, and admit non-obvious scope only when it is necessary for the requested outcome;
 - keep implementation status truthful with status sections or checked items only when work has actually landed;
 - pair delivery steps with acceptance or verification;
 - end with acceptance, success, completion, or architecture exit criteria that describe observable outcomes.

@@ -15,11 +15,27 @@ Produce a decision-dense specification that reflects the repository's actual sta
 - Use existing specs as presentation and reasoning precedent, not as a source of unrequested product requirements. If the user intentionally changes an earlier decision, name the superseded decision and describe the compatibility or migration consequence.
 - Scale the artifact to the work. A focused, low-risk change may need only a concise decision, behavior, affected surface, verification, and acceptance criteria; a cross-boundary or high-risk change needs deeper contracts and delivery treatment.
 
+## Scope Control
+
+Use the requested outcome and confirmed first slice as a fixed scope anchor. Add
+a behavior, deliverable, migration, changed surface, or verification obligation
+only when it is explicitly requested; is an evidence-backed prerequisite for the
+requested outcome to be correct, safe, compatible, or independently verifiable;
+or is mandated by repository instructions for the files that must change.
+
+Choose the narrowest sufficient form of every prerequisite. Do not add work for
+architectural symmetry, generic reuse, cleanup, modernization, broad consistency,
+future-proofing, speculative scale, or parity with adjacent features. A risk may
+be documented without adding its ideal remediation to scope. Put desirable but
+unnecessary work in a brief deferred list only when recording it helps prevent
+accidental inclusion; otherwise omit it.
+
 ## Workflow
 
 ### 1. Establish the request and destination
 
 - Identify the requested outcome, audience, scope, and whether the task is to create, revise, or review a spec.
+- Establish a scope baseline containing the requested outcome, admitted first slice, explicit exclusions, and any non-obvious required prerequisites with their evidence. Do not expand it while drafting.
 - If a spec context packet or discovery session exists, treat it as the requirements handoff: preserve its decisions, assumptions, source links, and open questions while re-verifying repository facts that may have changed.
 - Honor user-requested structure and length when they can still support an implementation-ready result. Treat local archetypes as defaults, not mandatory outlines.
 - Check handoff readiness. If a material product rule, ownership boundary, source of truth, security decision, or failure policy is missing, use `build-spec-context` before drafting. Proceed with bounded open questions only when they do not force the design to be invented.
@@ -35,6 +51,7 @@ Produce a decision-dense specification that reflects the repository's actual sta
 
 - Inspect the relevant source, configuration, migrations, tests, documentation, and adjacent specs before proposing a design.
 - Trace the current behavior through its real entry points and boundaries. Search for definitions and call sites; do not infer architecture from filenames alone.
+- Separate `must change` from `inspected for impact` and `unrelated existing deficiency`. Only the first category belongs in delivery work.
 - Verify every named file, symbol, command, dependency, and current-state claim.
 - Distinguish observed current state, requested behavior, proposed decisions, and unresolved questions.
 - Reconcile the handoff against repository evidence. Preserve product decisions, but flag any technical premise that the current code contradicts.
@@ -44,16 +61,19 @@ Produce a decision-dense specification that reflects the repository's actual sta
 
 - Lead with a concise summary or decision that tells the reader what will change, for whom, and why.
 - Define goals and explicit non-goals to bound the work.
+- Require every goal, normative requirement, delivery item, and acceptance criterion to trace to the scope baseline. Remove orphan requirements even when they are good engineering ideas.
 - Describe the proposed behavior end to end, including ownership boundaries and data flow.
-- Make contracts concrete where relevant: inputs, outputs, persistence, APIs, schemas, states, failure semantics, concurrency, security, privacy, observability, compatibility, and rollback.
+- Make contracts concrete only for admitted behavior and its actual boundaries: inputs, outputs, persistence, APIs, schemas, states, failure semantics, concurrency, security, privacy, observability, compatibility, and rollback.
 - Explain consequential choices and rejected alternatives. Avoid narrating obvious mechanics.
 - Preserve explicit invariants: data or behavior that must not be lost, duplicated, exposed, reordered, or overwritten.
 - Break delivery into reviewable, dependency-ordered slices when the change is too large for one safe change. Give each phase or PR its objective, work, and acceptance boundary.
+- Do not use delivery planning to introduce enabling platforms, generalized frameworks, repository-wide migrations, or optional follow-up phases that are not necessary for the admitted outcome.
 - Add diagrams only when they clarify a multi-component relationship or sequence better than prose.
 
 ### 4. Make completion verifiable
 
 - Define a test strategy at the appropriate layers, including failure paths and boundary behavior.
+- Keep verification proportional to admitted behavior. Repository-wide checks may be required gates, but their existence does not pull unrelated failures or cleanup into implementation scope.
 - Define rollout, migration, monitoring, and rollback when production state or compatibility can change.
 - Write acceptance criteria as observable outcomes. Each criterion must be decidable from code, tests, runtime behavior, or an explicit manual check.
 - Map acceptance criteria back to goals, business rules, failure semantics, and rollout constraints; do not reduce them to a file-change checklist.
@@ -69,14 +89,17 @@ Produce a decision-dense specification that reflects the repository's actual sta
 - Preserve useful existing content when revising; reconcile contradictions rather than replacing the document wholesale.
 - Do not modify production code, configuration, or migrations unless the user separately requests implementation.
 - Run a final review against the checklist below, then report the spec path, major decisions, assumptions, and open questions.
+- Before finalizing, compare the finished artifact to the scope baseline and remove any scope increase that lacks an explicit admission basis.
 
 ## Quality Checklist
 
 - The problem, intended outcome, goals, and non-goals agree.
+- Every normative requirement, delivery item, and acceptance criterion traces to the requested outcome or a documented required prerequisite; no optional engineering improvement is disguised as necessary scope.
 - The artifact follows explicit user constraints and does not import requirements solely from repository precedent.
 - The chosen spec archetype fits the work; architecture decisions and delivery tracking are separated when their lifecycles differ.
 - Current-state claims are supported by repository evidence and are clearly separated from the target state.
 - The design identifies ownership and behavior across every affected boundary.
+- The artifact distinguishes surfaces that must change from surfaces inspected only for compatibility or impact.
 - Contracts define validation, state transitions, replacement/merge semantics, ordering, and idempotency where relevant.
 - Failure, security/privacy, compatibility, migration, and operational concerns are addressed when applicable.
 - Delivery steps are ordered, independently reviewable where practical, and do not hide prerequisites.

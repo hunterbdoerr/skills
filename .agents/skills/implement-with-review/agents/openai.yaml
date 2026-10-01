@@ -1,0 +1,7 @@
+interface:
+  display_name: "Implement With Review"
+  short_description: "Add review and testing to focused coding"
+  default_prompt: "Use $implement-with-review to implement this well-defined change through independent review and evidence-based testing."
+
+policy:
+  allow_implicit_invocation: false
